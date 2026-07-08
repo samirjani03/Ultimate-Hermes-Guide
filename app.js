@@ -20,7 +20,7 @@ async function loadMarkdownFile(filename) {
         contentContainer.innerHTML = '<p>Loading...</p>';
         
         // Fetch the file from the docs folder
-        const response = await fetch(`docs/${filename}`);
+        const response = await fetch(`Docs/${filename}`);
         
         if (!response.ok) throw new Error('File not found');
         
