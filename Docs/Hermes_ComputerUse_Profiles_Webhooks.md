@@ -1,5 +1,7 @@
 # Hermes Agent — Computer Use, Profiles & Webhooks
 
+> **Official reference:** This guide is checked against the [Hermes Computer Use documentation](https://hermes-agent.nousresearch.com/docs/user-guide/features/computer-use), [Profiles documentation](https://hermes-agent.nousresearch.com/docs/user-guide/profiles), and [Webhooks documentation](https://hermes-agent.nousresearch.com/docs/user-guide/messaging/webhooks/). Refer to them for current platform requirements, isolation, and webhook security behavior.
+
 > Three power tools: drive GUI apps without touching your mouse, run isolated Hermes instances per project, and trigger Hermes from GitHub/CI/CD automatically.
 
 ---

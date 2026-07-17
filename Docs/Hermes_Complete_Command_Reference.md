@@ -1,10 +1,11 @@
 # Hermes Agent — The Complete Command Reference
 
+> **Official reference:** This command guide is checked against the [Hermes CLI Commands Reference](https://hermes-agent.nousresearch.com/docs/reference/cli-commands). Refer to it for the current command families and release-specific behavior.
+
 > The self-improving AI agent built by Nous Research.
 
 > Every command you'll ever need, organized by what you're trying to do. No explanations. No fluff. Just commands and what they do. Use this as your single-page cheat sheet.
 
-> Official Docs: <a href="https://hermes-agent.nousresearch.com/docs" target="_blank" rel="noopener noreferrer">https://hermes-agent.nousresearch.com/docs</a>
 ---
 
 ## STARTING & SESSION CONTROL

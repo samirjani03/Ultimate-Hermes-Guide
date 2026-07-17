@@ -1,5 +1,7 @@
 # Hermes Agent — Delegation (Subagents) Guide
 
+> **Official reference:** This guide is checked against the [Hermes Delegation documentation](https://hermes-agent.nousresearch.com/docs/user-guide/features/delegation) and [Delegation Patterns guide](https://hermes-agent.nousresearch.com/docs/guides/delegation-patterns). Refer to them for current subagent behavior and patterns.
+
 > Delegation = Hermes clones itself to work on MULTIPLE things at the SAME TIME. One agent scans the target, another researches the CVE, a third writes your report. All in parallel. You just keep talking to the main Hermes.
 
 ---

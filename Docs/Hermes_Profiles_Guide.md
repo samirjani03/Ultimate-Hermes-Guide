@@ -1,6 +1,6 @@
 # Hermes Profiles: Running Separate Isolated Instances (Study / Work / CTF)
 
-*Sourced from the official docs at hermes-agent.nousresearch.com/docs/user-guide/profiles and the official FAQ page. Commands below are the real, current ones, not guessed.*
+> **Official reference:** This guide is checked against the [Hermes Profiles documentation](https://hermes-agent.nousresearch.com/docs/user-guide/profiles). Refer to it for the current profile layout, commands, and release-specific behavior.
 
 ---
 

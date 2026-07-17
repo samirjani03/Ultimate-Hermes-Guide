@@ -1,5 +1,7 @@
 # Hermes Agent Plugins: Beginner Guide (Free Setup + Pentesting Use Cases)
 
+> **Official reference:** This guide is checked against the [Hermes Plugins documentation](https://hermes-agent.nousresearch.com/docs/user-guide/features/plugins). Refer to it for the current plugin model, setup, and release-specific behavior.
+
 ## 1. What even is a "plugin"? (vs MCP vs Skills)
 
 Hermes has THREE different ways to extend it. People mix them up all the time, so here's the simple breakdown:

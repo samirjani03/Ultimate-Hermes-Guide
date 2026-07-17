@@ -1,5 +1,7 @@
 # Hermes Agent — Cron Jobs & Gateway (Telegram) Guide
 
+> **Official reference:** This guide is checked against the [Hermes Cron Jobs documentation](https://hermes-agent.nousresearch.com/docs/user-guide/features/cron) and [Messaging Gateway documentation](https://hermes-agent.nousresearch.com/docs/user-guide/messaging). Refer to them for current scheduling and platform behavior.
+
 > Two systems that let Hermes work WITHOUT you being there. Cron jobs = scheduled autonomous tasks (scan this every day, remind me every Monday). Gateway = control Hermes from messaging apps (Telegram on your phone when away from the Kali VM).
 
 ---

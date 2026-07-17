@@ -1,5 +1,7 @@
 # Hermes Agent — MCP (Model Context Protocol) Guide
 
+> **Official reference:** This guide is checked against the [Hermes MCP documentation](https://hermes-agent.nousresearch.com/docs/user-guide/features/mcp) and [MCP Configuration Reference](https://hermes-agent.nousresearch.com/docs/reference/mcp-config-reference). Refer to them for current connection and filtering behavior.
+
 > MCP is how you give Hermes SUPERPOWERS. Connect external tools — GitHub, Docker, Shodan, Nmap, databases, browsers — and Hermes uses them like built-in tools. This guide covers setup, real use cases, and a curated list of MCP servers for cybersecurity and development.
 
 ---

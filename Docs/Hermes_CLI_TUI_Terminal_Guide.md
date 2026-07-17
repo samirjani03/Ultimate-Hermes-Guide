@@ -1,5 +1,7 @@
 # Hermes Agent — CLI/TUI Mastery + Terminal Tool Deep Dive
 
+> **Official reference:** This guide is checked against the [Hermes CLI documentation](https://hermes-agent.nousresearch.com/docs/user-guide/cli), [TUI documentation](https://hermes-agent.nousresearch.com/docs/user-guide/tui), and [CLI Commands Reference](https://hermes-agent.nousresearch.com/docs/reference/cli-commands). Refer to them for current interface and command behavior.
+
 > Complete guide covering the two things you touch every session: the interface (CLI/TUI) and the execution engine (Terminal tool).
 
 ---

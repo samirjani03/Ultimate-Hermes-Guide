@@ -1,4 +1,6 @@
-# Hermes session management cheatsheet — organized as a workflow, not just a command dump. 
+# Hermes session management cheatsheet — organized as a workflow, not just a command dump.
+
+> **Official reference:** This guide is checked against the [Hermes Sessions documentation](https://hermes-agent.nousresearch.com/docs/user-guide/sessions). Refer to it for the current session-management behavior and commands.
     
     SESSION MANAGEMENT CHEATSHEET
     

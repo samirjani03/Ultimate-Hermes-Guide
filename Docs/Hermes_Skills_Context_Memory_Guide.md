@@ -2,6 +2,8 @@
 
 > The three systems that make Hermes SMARTER over time. Skills = reusable workflows. Project context = per-project rules. Memory = facts that survive across sessions. Master these and Hermes stops being a tool and starts being YOUR agent.
 
+> **Official reference:** This guide's Skills commands and formats are checked against the [Hermes Skills System documentation](https://hermes-agent.nousresearch.com/docs/user-guide/features/skills). Refer to it for the current catalog and release-specific behavior.
+
 ---
 
 ## PART 1: SKILLS SYSTEM
@@ -10,33 +12,35 @@
 
 A skill is a markdown file (SKILL.md) that teaches Hermes HOW to do something. It's reusable knowledge — write it once, load it forever.
 
-**Real example from your own setup:**
+**Public example:**
 ```
-traceix-api-integration   → teaches Hermes how to use the Traceix malware analysis API
-hermes-agent              → teaches Hermes how to configure and extend itself
+deploy-runbook   → guides a team through a repeatable deployment and rollback process
 ```
 
 Every time you solve a tricky problem, discover a workflow, or get corrected by Hermes on something environment-specific — that's a candidate for a skill.
 
-**Mental model:** Skills are like giving Hermes a cheat sheet before a task. Instead of explaining "use the Traceix API endpoint at this URL, with this auth header, and parse the response like this" every single time, you write it once as a skill, and Hermes loads it whenever needed.
+**Mental model:** A skill is a task-specific playbook. Instead of re-explaining a repeatable process, keep its steps, checks, and known pitfalls together so Hermes can load it only when it is relevant.
 
 ---
 
 ### 1.2 Where skills live
 
 ```
-~/.hermes/skills/                          # your installed skills
-├── autonomous-ai-agents/
-│   └── hermes-agent/
-│       ├── SKILL.md                       # the skill itself
-│       └── references/                    # linked files (docs, templates)
-│           ├── webhooks.md
-│           └── native-mcp.md
-└── traceix-api-integration/
-    └── SKILL.md
+~/.hermes/skills/                          # primary skill directory
+├── devops/
+│   └── deploy-k8s/
+│       └── SKILL.md                       # required main instructions
+└── mlops/
+    └── axolotl/
+        ├── SKILL.md
+        ├── references/                    # optional supporting material
+        ├── templates/
+        ├── scripts/
+        ├── examples/
+        └── assets/
 ```
 
-Profiles have their own skills: `~/.hermes/profiles/<name>/skills/`
+`~/.hermes/skills/` is Hermes' primary source of truth. You can also configure external skill directories; when names collide, the local skill takes precedence.
 
 ---
 
@@ -46,58 +50,51 @@ Profiles have their own skills: `~/.hermes/profiles/<name>/skills/`
 # Browse the skills catalog (interactive)
 hermes skills browse
 
-# Search the catalog
-hermes skills search "docker"
-hermes skills search "pentesting"
-hermes skills search "python testing"
+# Search all available sources
+hermes skills search kubernetes
 
-# Preview a skill before installing
-hermes skills inspect github-code-review
+# Preview before installing
+hermes skills inspect openai/skills/k8s
 
-# Install a skill from the hub
-hermes skills install github-code-review
+# Install with Hermes' security scan
+hermes skills install openai/skills/k8s
 
-# Install from a direct URL
-hermes skills install https://raw.githubusercontent.com/user/repo/main/SKILL.md
+# Browse or install official optional skills
+hermes skills browse --source official
+hermes skills install official/security/1password
 
-# List your installed skills
-hermes skills list
+# Install a SKILL.md from a direct URL
+hermes skills install https://sharethis.chat/SKILL.md
 
-# Check for updates to installed skills
+# List, check, and update Hub-installed skills
+hermes skills list --source hub
 hermes skills check
-
-# Update outdated skills
 hermes skills update
 
-# Uninstall a skill
-hermes skills uninstall github-code-review
-
-# Enable/disable skills per platform (CLI vs Telegram vs Discord)
-hermes skills config
+# Re-scan or remove a Hub skill
+hermes skills audit
+hermes skills uninstall k8s
 
 # Add a GitHub repo as a skill source (community skills)
-hermes skills tap add https://github.com/some-user/hermes-skills
+hermes skills tap add myorg/skills-repo
 ```
 
 ---
 
 ### 1.4 Loading skills into your session
 
-Three ways:
-
-**1. At startup (before chat begins)**
-```bash
-hermes --skills traceix-api-integration
-hermes -s traceix-api-integration,github-code-review
+Every installed skill is available as a slash command. For example:
+```
+/plan design a rollout for migrating our auth provider
+/excalidraw
 ```
 
-**2. During a session (slash command)**
+You can load up to five skills at once by placing their slash commands at the start of a message:
 ```
-/skill traceix-api-integration
+/github-pr-workflow /test-driven-development fix issue #123 and open a PR
 ```
 
-**3. During a session (automatically)**
-If a skill is relevant to your task, Hermes auto-loads it. The skill's description and tags help Hermes decide when it's relevant.
+Use `/skills` for Skills Hub management in chat, for example `/skills list` or `/skills search react --source skills-sh`.
 
 ---
 
@@ -107,16 +104,12 @@ There are two ways: agent-created (Hermes writes it) and human-created (you writ
 
 #### Agent-created (easiest)
 
-After finishing a complex task, tell Hermes:
+Use `/learn` to turn a source or a workflow into a reusable skill:
 ```
-"Save this workflow as a skill called 'docker-deploy'"
+/learn how I just deployed the staging server
 ```
 
-Hermes will:
-1. Analyze what it just did
-2. Extract the reusable steps, commands, and pitfalls
-3. Create a SKILL.md in `~/.hermes/skills/`
-4. Tag it with `created_by: "agent"` (so the curator can manage it)
+You can also point `/learn` at local documentation, an online documentation page, pasted notes, or a procedure you describe. Hermes gathers the supplied material and authors a standard `SKILL.md`.
 
 #### Human-created (more control)
 
@@ -125,38 +118,30 @@ Create the file yourself. Minimum structure:
 ```markdown
 ---
 name: my-skill-name
-description: "What this skill teaches Hermes to do"
+description: Brief description of what this skill does
 version: 1.0.0
+metadata:
+  hermes:
+    tags: [deployment, runbook]
 ---
 
 # My Skill
 
-## When to use this skill
-- When doing X
-- When Y happens
+## When to Use
+- State the situations that should trigger this skill.
 
-## Steps
-1. First do this
-   ```bash
-   command here
-   ```
-2. Then do that
-3. Verify with this check
+## Procedure
+1. Record the first safe, repeatable step.
+2. Record the next step and its expected outcome.
 
 ## Pitfalls
-- Don't do X because Y will break
-- Watch out for Z on Kali Linux
+- Name known failure modes and how to recover.
 
 ## Verification
-- Run `command` and confirm output contains "success"
+- Explain how to confirm the workflow succeeded.
 ```
 
 Save it anywhere under `~/.hermes/skills/<skill-name>/SKILL.md`.
-
-After creating, reload:
-```
-/reload-skills
-```
 
 ---
 
@@ -177,50 +162,12 @@ Skills can have sub-files in `references/`, `templates/`, `scripts/`, and `asset
 
 ---
 
-### 1.7 The Curator — automatic skill maintenance
-
-The Curator is a background system that manages agent-created skills:
-
-```bash
-hermes curator status        # check curator health
-hermes curator run           # trigger a maintenance pass
-hermes curator pause         # pause background maintenance
-hermes curator resume        # resume
-hermes curator pin <name>    # protect a skill from auto-archive
-hermes curator unpin <name>  # remove protection
-hermes curator archive <name> # archive a stale skill
-hermes curator restore <name> # restore from archive
-hermes curator prune          # clean up archives
-hermes curator backup         # manual backup
-hermes curator rollback       # restore from backup
-```
-
-In-session equivalent:
-```
-/curator status
-/curator run
-```
-
-**What the Curator does (safely):**
-- Tracks how often each skill is used
-- Marks idle skills as "stale" (configurable: `curator.stale_after_days`)
-- Archives stale skills (never deletes — max destructive action is archive)
-- Pinned skills are exempt from ALL automatic transitions
-- Runs a pre-backup tar.gz before any changes
-
-**What the Curator does NOT do:**
-- Never touches bundled or hub-installed skills (only `created_by: "agent"`)
-- Never deletes — archive is the hardest action
-- Consolidation (merging overlapping skills) is OFF by default — opt-in with `curator.consolidate: true`
-
----
-
-### 1.8 When to create a skill vs when not to
+### 1.7 When to create a skill vs when not to
 
 **Create a skill when:**
 - You solved a complex problem (5+ steps) you'll face again
 - You hit an error, figured out the fix, and want to remember it
-- You discovered a Kali-specific quirk that differs from regular Linux
+- You discovered a platform-specific quirk that differs from your usual environment
 - You have a tool with specific flags/env vars you always forget
 - Hermes corrected you on something environment-specific
 
@@ -232,20 +179,21 @@ In-session equivalent:
 
 ---
 
-### 1.9 Skills workflow cheat sheet
+### 1.8 Skills workflow cheat sheet
 
 ```
 GOAL                                    COMMAND
 ──────────────────────────────────────────────────────────────────
-Find skills for X                       hermes skills search X
-Preview a skill                         hermes skills inspect name
-Install a skill                         hermes skills install name
-List my skills                          hermes skills list
-Load skill for this session             /skill name (in chat)  OR  hermes -s name
-Ask Hermes to save workflow as skill    "Save this as a skill called 'name'"
-Create a skill manually                 mkdir ~/.hermes/skills/name/ → create SKILL.md → /reload-skills
+Find a skill                            hermes skills search <query>
+Preview a skill                         hermes skills inspect <identifier>
+Install an official skill               hermes skills install official/<category>/<name>
+Install from GitHub                     hermes skills install <owner>/<repo>/<path>
+List Hub-installed skills               hermes skills list --source hub
+Invoke an installed skill               /skill-name <request>
+Create a source-backed skill            /learn <source or workflow>
 Check for updates                       hermes skills check
-Protect a skill from auto-archive       hermes curator pin name
+Update installed Hub skills             hermes skills update
+Review installed Hub skills             hermes skills audit
 ```
 
 ---
@@ -418,27 +366,21 @@ Memory is persistent storage that survives across sessions. Two targets:
 | `user` | Who the user IS | Name, timezone, skill level, goals, communication preferences |
 | `memory` | What the agent KNOWS | Environment details, tool quirks, project conventions, lessons learned |
 
-**Mental model:** Memory is Hermes's long-term notebook. Every session, Hermes gets a copy of your memory injected into the conversation. This is why Hermes remembers your name (Skull_crusher), your timezone (IST), and that you use Kali in VirtualBox — it's all in memory.
+**Mental model:** Memory is Hermes's long-term notebook. Use it for durable, compact facts—not private credentials, full project internals, or temporary task notes.
 
 ---
 
-### 3.2 What's already in your memory
+### 3.2 A public-safe memory rule
 
-Right now, your memory contains (I can see it at the top of every session):
+Do not publish a snapshot of a real person's memory, profile, machine configuration, local paths, or project secrets. Documentation should demonstrate the *shape* of a useful memory entry without exposing anyone's data:
 
-**User profile (94% full):**
-- Name: Skull_crusher, Telegram: @Skullcrusher0366
-- Location: Gujarat, India, IST timezone
-- Cybersecurity student, offensive security focus
-- Skill levels: Linux beginner, Networking learning, Kali tools beginner, Python 7/10, C 7/10, JS 6/10, Bash 3/10
-- Goals: Bug bounty → Windows red team → malware analysis → exploit dev in Rust
-- Communication: Simple English, step-by-step, verify-first, no jargon
+```
+Good: "Project uses pytest for automated tests."
+Good: "User prefers concise status updates."
+Avoid: API keys, access tokens, home-directory paths, contact details, or temporary task progress.
+```
 
-**Agent memory (46% full):**
-- Engineering preferences (think first, correctness over speed)
-- Environment: Kali Linux VM on VirtualBox on Windows laptop
-- Hermes terminal tool quirk (uv add blocked, use pyproject.toml + uv sync)
-- TraceixExplorer project details (path, Python version, venv, deps)
+This keeps a guide reusable for every reader while modeling good operational hygiene.
 
 ---
 
@@ -542,7 +484,7 @@ Your user profile is nearly full (94%). That's fine — it rarely changes. But i
 
 **Also bad (too verbose):**
 ```
-"When working on the TraceixExplorer project in /home/kali/Coding/TraceixExplorer, always use Python 3.12 with the virtual environment at .venv/bin/activate and use uv for package management..."
+"When working on the release service, use this specific environment, these package commands, these endpoints, and this rollback procedure..."
 ```
 
 That should be a SKILL, not a memory entry. Memory is for quick facts; skills are for procedures.
@@ -554,7 +496,7 @@ That should be a SKILL, not a memory entry. Memory is for quick facts; skills ar
 | System | What it's for | Example |
 |--------|--------------|---------|
 | **Memory** | Quick facts that survive all sessions | "User is in IST timezone", "Use uv not pip" |
-| **Skills** | Reusable procedures and workflows | "How to deploy this app to Docker", "Traceix API integration" |
+| **Skills** | Reusable procedures and workflows | "How to deploy this app to Docker", "How to prepare release notes" |
 | **Project Context** | Per-project rules, loaded automatically | "This repo uses FastAPI, pytest, and SQLAlchemy" |
 
 **Decision flowchart:**
@@ -573,8 +515,8 @@ Different from memory. `session_search` searches your actual conversation histor
 
 ```bash
 # Hermes can search your past sessions for context
-session_search(query="TraceixExplorer Docker setup")
-session_search(query="nmap scan techniques")
+session_search(query="release checklist")
+session_search(query="Docker deployment notes")
 ```
 
 This is how Hermes finds "what did we discuss about X last week" without you repeating yourself.
@@ -583,46 +525,52 @@ This is how Hermes finds "what did we discuss about X last week" without you rep
 
 ## PART 4: PUTTING IT ALL TOGETHER
 
-### Real example: Your TraceixExplorer project
+### Public-safe example: a release readiness assistant
 
-Here's how these three systems work together for your actual project:
+This pattern combines Hermes' documented context files with a portable skill—without copying a real developer's environment into public documentation.
 
-**Project context (`.hermes.md` at `/home/kali/Coding/TraceixExplorer/.hermes.md`):**
+**Project context (`AGENTS.md`):**
 ```markdown
-# TraceixExplorer
+# Release service
 
-## Setup
-- Python 3.12, venv at .venv/
-- Use `uv sync` to install deps, NEVER `uv add` or `uv pip install`
-- API key in .env: TRACEIX_API_KEY
+## Architecture
+- API code is in `backend/`; the web app is in `frontend/`.
 
-## Run
-- Dev server: `uv run uvicorn main:app --reload --port 8000`
-- Tests: `uv run pytest -xvs`
-
-## Style
-- FastAPI + Jinja2 + Tailwind CDN
-- All routes in routes/ directory
-- Templates in templates/
+## Release checks
+- Run the project's documented test suite before a release.
+- Record the release version and rollback owner in the change summary.
+- Never place credentials or production tokens in this file.
 ```
 
-**Skill (`traceix-api-integration`):**
-Teaches Hermes the Traceix API endpoints, auth headers, response format, and how to parse results.
+Hermes treats `AGENTS.md` as project context: it loads the file in the working directory at session start and can discover context files in subdirectories as it works there. Keep context focused on structure, conventions, and stable guardrails.
 
-**Memory (already saved):**
+**Skill (`release-readiness`):**
+```markdown
+---
+name: release-readiness
+description: Create a repeatable release-readiness brief
+version: 1.0.0
+---
+
+# Release Readiness
+
+## When to Use
+- Before a planned release or rollback review.
+
+## Procedure
+1. Gather the approved change summary and test evidence.
+2. Identify owners, dependencies, and rollback criteria.
+3. Produce a concise go/no-go brief with open risks.
+
+## Verification
+- Confirm every item has an owner or is explicitly accepted as a risk.
 ```
-TraceixExplorer: /home/kali/Coding/TraceixExplorer, Python 3.12,
-venv .venv/bin/activate, uv, FastAPI+Jinja2+Tailwind CDN,
-Traceix API key in .env. Skill: traceix-api-integration.
-```
 
-**Result:** When you run `hermes` in the TraceixExplorer directory, Hermes automatically:
-1. Loads `.hermes.md` (knows build commands, style, structure)
-2. Has the `traceix-api-integration` skill available
-3. Remembers the project path, venv, and deps from memory
-4. Can search past sessions for "TraceixExplorer" discussions
+**Memory:** Keep only durable preferences that improve future collaboration, such as “release summaries should include a rollback owner.” Do not store credentials, internal endpoints, or a user's personal data.
 
-You never need to re-explain anything.
+**Why this is useful:** Context files explain the repository; a skill captures a repeatable procedure; memory preserves a small, long-lived preference. The separation keeps instructions easy to update and safe to share.
+
+> **Unique rule of thumb — the portability test:** If you could remove names, paths, tokens, and company-specific facts and the workflow still helps another team, it belongs in a public skill. Otherwise, keep it private to the project context or do not store it at all.
 
 ---
 
@@ -659,14 +607,16 @@ hermes
 
 ### Skills
 ```
+Browse official skills  hermes skills browse --source official
 Find a skill            hermes skills search <query>
-Install a skill         hermes skills install <name>
-List my skills          hermes skills list
-Load in session         /skill <name>  OR  hermes -s <name>
-Create from chat        "Save this as a skill called 'name'"
+Preview a skill         hermes skills inspect <identifier>
+Install a skill         hermes skills install <identifier>
+List Hub skills         hermes skills list --source hub
+Load in chat            /skill-name <request>
+Create from sources     /learn <source or workflow>
 Check for updates       hermes skills check
-Protect from archive    hermes curator pin <name>
-Reload skills           /reload-skills
+Update Hub skills       hermes skills update
+Audit Hub skills        hermes skills audit
 ```
 
 ### Project Context

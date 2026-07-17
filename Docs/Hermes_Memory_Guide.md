@@ -1,5 +1,7 @@
 # Hermes Memory Guide — From Beginner to Pro
 
+> **Official reference:** This guide is checked against the [Hermes Memory documentation](https://hermes-agent.nousresearch.com/docs/user-guide/features/memory) and [Memory Providers documentation](https://hermes-agent.nousresearch.com/docs/user-guide/features/memory-providers). Refer to them for the current memory model and supported providers.
+
 > Memory is what makes Hermes YOUR agent, not just a chatbot. Without it, every session starts from zero. With it, Hermes remembers who you are, how you work, and what you've learned together. This guide covers everything: built-in memory, 8 external providers, Mem0 vs Cognee vs TencentDB, pricing, setup, and pro tips.
 
 ---

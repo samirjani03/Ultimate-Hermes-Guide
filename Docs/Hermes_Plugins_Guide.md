@@ -1,5 +1,7 @@
 # Hermes Agent — Plugins Guide: Custom Tools, Hooks & Extensions
 
+> **Official reference:** This guide is checked against the [Hermes Plugins documentation](https://hermes-agent.nousresearch.com/docs/user-guide/features/plugins) and [Build a Hermes Plugin guide](https://hermes-agent.nousresearch.com/docs/guides/build-a-hermes-plugin). Refer to them for current APIs and release-specific behavior.
+
 > Plugins are how you EXTEND Hermes with your own code — custom tools, lifecycle hooks, slash commands, and CLI subcommands. No need to modify Hermes core. Drop a Python file in a folder and Hermes picks it up. This guide covers everything: what plugins can do, how to build one, real use cases, and the decision guide (plugin vs skill vs MCP).
 
 ---

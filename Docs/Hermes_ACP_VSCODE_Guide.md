@@ -1,6 +1,6 @@
 # Hermes ACP: IDE Integration with VS Code (Beginner Guide)
 
-*Everything here is checked against the official Hermes docs at hermes-agent.nousresearch.com/docs (specifically the ACP Editor Integration page and CLI Commands Reference). Where something comes from a community extension instead of Nous Research directly, it's marked clearly below.*
+> **Official reference:** This guide is checked against the [Hermes ACP documentation](https://hermes-agent.nousresearch.com/docs/user-guide/features/acp) and [CLI Commands Reference](https://hermes-agent.nousresearch.com/docs/reference/cli-commands). Refer to them for current editor integration and command behavior.
 
 ---
 
